@@ -1,0 +1,79 @@
+version: '3.6'
+
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
+
+services:
+
+  alertmanager:
+    container_name: alertmanager
+    hostname: alertmanager
+    image: prom/alertmanager
+    #volumes:
+      #- ./alertmanager.conf:/etc/alertmanager/alertmanager.conf
+    #command:
+      #- '--config.file=/etc/alertmanager/alertmanager.conf'
+    ports:
+      - "9093:9093"
+    environment:
+      TZ: "America/Argentina/Buenos_Aires"
+    restart: unless-stopped
+
+  prometheus:
+    container_name: prometheus
+    hostname: prometheus
+    image: prom/prometheus
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./config/prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    links:
+      - alertmanager:alertmanager
+    ports:
+      - "9095:9090"
+    environment:
+      TZ: "America/Argentina/Buenos_Aires"
+    restart: unless-stopped
+
+  grafana:
+    container_name: grafana
+    hostname: grafana
+    image: grafana/grafana
+    volumes:
+      - ./config/grafana/grafana_datasources.yml:/etc/grafana/provisioning/datasources/all.yaml
+      - ./config/grafana/grafana_config.ini:/etc/grafana/config.ini
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "9096:3000"
+    environment:
+      TZ: "America/Argentina/Buenos_Aires"
+    restart: unless-stopped
+
+  node-app:
+    container_name: node-app
+    hostname: node-app
+    image: javiermartingonzalez/simple-node-app
+    ports:
+      - "4000:4000"
+    environment:
+      TZ: "America/Argentina/Buenos_Aires"
+    restart: unless-stopped
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    expose:
+      - 9100
