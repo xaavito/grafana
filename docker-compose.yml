@@ -50,6 +50,9 @@ services:
       - "9096:3000"
     environment:
       TZ: "America/Argentina/Buenos_Aires"
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
     restart: unless-stopped
 
   node-app:
