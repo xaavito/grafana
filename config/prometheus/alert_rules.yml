@@ -1,13 +1,13 @@
-groups:
-  - name: RequestTimeout
-    rules:
-      - alert: RequestTakingMoreThanOKTime
+#groups:
+  #- name: RequestTimeout
+    #rules:
+      #- alert: RequestTakingMoreThanOKTime
         # Condition for alerting
-        expr: rate(http_request_duration_seconds_sum{route="/variable"}[5m]) / rate(http_request_duration_seconds_count{route="/variable"}[5m]) > 3
+        #expr: rate(http_request_duration_seconds_sum{route="/variable"}[5m]) / rate(http_request_duration_seconds_count{route="/variable"}[5m]) > 3
         # Annotation - additional informational labels to store more information
-        annotations:
-          title: 'Endpoint is taking too long'
-          description: ' endpoint average'
+        #annotations:
+          #title: 'Endpoint is taking too long'
+          #description: ' endpoint average'
         # Labels - additional labels to be attached to the alert
-        labels:
-          severity: 'critical'
+        #labels:
+          #severity: 'critical'
