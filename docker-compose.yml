@@ -6,6 +6,7 @@ volumes:
 
 services:
 
+  # No se usa para la demo por el momento
   alertmanager:
     container_name: alertmanager
     hostname: alertmanager
